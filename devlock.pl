@@ -4,20 +4,22 @@
 use strict;
 use warnings;
 
-use constant INIT_LOCK => 1;    # 0 to unlock keyboard at start
-
 use Gtk2 '-init';
 use FindBin qw ( $RealBin );
 use constant ICON_PATH => $RealBin . '/i/';
 use constant APPNAME   => 'DevLocker';
-use constant APPVER    => '0.3';
+use constant APPVER    => '0.4';
 
 ###################################################################
-my $locked   = !INIT_LOCK;
 my $lockfile = $0;
 $0 =~ m|^.*/([^/]+)$| and $lockfile = $1;
-my $DEV_ID = $ARGV[0]
-  or _die( "Usage: $lockfile device_id\nRun `xinput --list` to get device_id" );
+my $usage =
+  "Usage: $lockfile device_id [unlock]\nRun `xinput --list` to get device_id";
+_die( $usage ) if $#ARGV < 0 or $#ARGV > 1;
+_die( $usage ) unless $ARGV[0] =~ /^\d+$/;
+_die( $usage ) if $#ARGV == 1 and $ARGV[1] ne 'unlock';
+my $DEV_ID  = $ARGV[0];
+my $locked  = ( $#ARGV == 1 and $ARGV[1] eq 'unlock' );
 my $devname = `xinput --list --name-only $DEV_ID 2>&1`;
 chomp $devname if $devname;
 _die( "Can not get device name for ID '$DEV_ID'!" )
