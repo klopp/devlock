@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Devlock : Perl/Gtk device locker" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Devlock</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/klopp/devlock">View on GitHub</a>
+
+          <h1 id="project_title">Devlock</h1>
+          <h2 id="project_tagline">Perl/Gtk device locker</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/klopp/devlock/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/klopp/devlock/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><img src="http://klopp.net.ru/Perl/devlock/dev-off-tt.png" alt="Device locked, default icon, tooltip on mouseover"></p>
+
+<h3>
+<a name="find-needed-device-id" class="anchor" href="#find-needed-device-id"><span class="octicon octicon-link"></span></a>Find needed device id:</h3>
+
+<pre><code>[23:16:48] klopp:devlock $ xinput --list
+⎡ Virtual core pointer                        id=2    [master pointer  (3)]
+⎜   ↳ Virtual core XTEST pointer                id=4    [slave  pointer  (2)]
+⎜   ↳ USB USB Keykoard                          id=10   [slave  pointer  (2)]
+⎜   ↳ PixArt USB Optical Mouse                  id=11   [slave  pointer  (2)]
+⎜   ↳ SynPS/2 Synaptics TouchPad                id=14   [slave  pointer  (2)]
+⎣ Virtual core keyboard                       id=3    [master keyboard (2)]
+    ↳ Virtual core XTEST keyboard                 id=5    [slave  keyboard (3)]
+    ↳ Power Button                                id=6    [slave  keyboard (3)]
+    ↳ Video Bus                                   id=7    [slave  keyboard (3)]
+    ↳ Sleep Button                                id=8    [slave  keyboard (3)]
+    ↳ Lenovo EasyCamera                           id=12   [slave  keyboard (3)]
+    ↳ AT Translated Set 2 keyboard                id=13   [slave  keyboard (3)]
+    ↳ Ideapad extra buttons                       id=15   [slave  keyboard (3)]
+    ↳ USB USB Keykoard                            id=9    [slave  keyboard (3)]
+</code></pre>
+
+<p>Last line in this example, <em>USB USB Keykoard</em> (ID <em>9</em>).</p>
+
+<h3>
+<a name="copy-icons" class="anchor" href="#copy-icons"><span class="octicon octicon-link"></span></a>Copy icons:</h3>
+
+<pre><code>[23:16:48] klopp:devlock $ cp i/kb-on.png i/9-on.png
+[23:16:52] klopp:devlock $ cp i/kb-off.png i/9-off.png
+</code></pre>
+
+<p><strong>or</strong></p>
+
+<p>create your own icons with names <em>9-on.png</em> and <em>9-off.png</em> and put them in <em>i</em> subdirectory of <em>devlock.pl</em> script.</p>
+
+<p><strong>or</strong></p>
+
+<p>do nothing to use default icons</p>
+
+<h3>
+<a name="run" class="anchor" href="#run"><span class="octicon octicon-link"></span></a>Run</h3>
+
+<pre><code>[23:17:12] klopp:devlock $ ./devlock.pl 9
+</code></pre>
+
+<p>(device will be locked after script start)</p>
+
+<h3>
+<a name="or" class="anchor" href="#or"><span class="octicon octicon-link"></span></a>or</h3>
+
+<pre><code>[23:17:12] klopp:devlock $ ./devlock.pl 9 unlock
+</code></pre>
+
+<p>to unlock device at start.</p>
+
+<h3>
+<a name="controls" class="anchor" href="#controls"><span class="octicon octicon-link"></span></a>Controls</h3>
+
+<ol>
+<li>Left-click: switch locking</li>
+<li>Right-click: unlock and exit</li>
+<li>SIGHUP: reload icons</li>
+</ol><p>See also: <a href="https://github.com/klopp/devlock/wiki/Screenshots">Screenshots</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Devlock maintained by <a href="https://github.com/klopp">klopp</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
