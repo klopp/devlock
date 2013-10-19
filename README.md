@@ -1,4 +1,4 @@
 devlock
 =======
 
-Perl/Gtk device locker
+Perl/Gtk device locker for Linux
