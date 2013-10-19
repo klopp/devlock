@@ -19,7 +19,7 @@ $0 =~ m|^.*/([^/]+)$| and $lockfile = $1;
 my $DEV_ID = $ARGV[0]
   or _die( "Usage: $lockfile device_id\nRun `xinput --list` to get device_id" );
 my $devname = `xinput --list --name-only $DEV_ID 2>&1`;
-chomp $devname;
+chomp $devname if $devname;
 _die( "Can not get device name for ID '$DEV_ID'!" )
   if !$devname
   or $devname =~ /$DEV_ID$/;
@@ -34,7 +34,7 @@ $SIG{HUP} = sub {
 };
 
 $lockfile = "/var/lock/$lockfile.$DEV_ID.lock";
-if( open my $lock, $lockfile )
+if( open my $lock, q{<}, $lockfile )
 {
     my $pid = <$lock>;
     close $lock;
@@ -42,7 +42,7 @@ if( open my $lock, $lockfile )
       if kill 0, $pid;
 }
 _die( "Can not create lock in '$lockfile'!" )
-  unless open my $lock, ">$lockfile";
+  unless open my $lock, q{>}, $lockfile;
 print $lock $$;
 close $lock;
 
