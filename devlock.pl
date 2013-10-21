@@ -1,6 +1,10 @@
 #!/usr/bin/perl
 
 ###################################################################
+# Device Locker
+# Usage & features : https://sourceforge.net/p/devlock/wiki/Home/
+# Author e-mail    : klopp@yandex.ru
+###################################################################
 use strict;
 use warnings;
 
