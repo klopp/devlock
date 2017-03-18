@@ -3,17 +3,17 @@
 use strict;
 use warnings;
 use Gtk2 '-init';
-use FindBin qw ( $RealBin );
+use FindBin qw /$RealBin/;
+use File::Basename;
 use constant ICON_PATH => $RealBin . '/i/';
 use constant APPNAME   => 'DevLocker';
 use constant APPVER    => '0.6';
 
 # -----------------------------------------------------------------------------
-my $lockfile = $0;
-$0 =~ m|^.*/([^/]+)$| and $lockfile = $1;
-my $usage = qq(
+my $PROGNAME = basename($0);
+my $usage    = qq(
  Usage:
- $lockfile "DEVICE_ID_STRING [position|last|first]"
+ $PROGNAME "DEVICE_ID_STRING" [position|last|first]
  Default position is 'last'  
  Run `xinput --list` to get DEVICE_ID_STRING );
 
@@ -113,23 +113,27 @@ sub _load_icons
 sub _switch_state
 {
     $DEV_ID = _get_dev_id();
-    return unless $DEV_ID;
-    _trayicon_set_tooltip();
-    if ($locked) {
-        $trayicon->set_from_pixbuf($ICON_ON);
-        `xinput enable $DEV_ID`;
+    if ( $DEV_ID =~ /^\d+$/ ) {
+        _trayicon_set_tooltip();
+        if ($locked) {
+            $trayicon->set_from_pixbuf($ICON_ON);
+            `xinput enable $DEV_ID`;
+        }
+        else {
+            $trayicon->set_from_pixbuf($ICON_OFF);
+            `xinput disable $DEV_ID`;
+        }
+        $locked ^= 1;
     }
     else {
-        $trayicon->set_from_pixbuf($ICON_OFF);
-        `xinput disable $DEV_ID`;
+        _die( $DEV_ID, 1 );
     }
-    $locked ^= 1;
 }
 
 # -----------------------------------------------------------------------------
 sub _die
 {
-    my ($msg) = @_;
+    my ( $msg, $noquit ) = @_;
 
     my $dialog = Gtk2::Dialog->new( APPNAME . ' v ' . APPVER,
         undef, 'destroy-with-parent', 'gtk-ok' => 'none' );
@@ -137,8 +141,10 @@ sub _die
     $dialog->get_content_area()->add($label);
     $dialog->signal_connect( response => sub { Gtk2->main_quit } );
     $dialog->show_all;
-    Gtk2->main;
-    exit;
+    unless ($noquit) {
+        Gtk2->main;
+        exit;
+    }
 }
 
 # -----------------------------------------------------------------------------
