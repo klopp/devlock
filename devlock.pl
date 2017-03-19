@@ -17,7 +17,7 @@ my $usage    = qq(
  or
      $PROGNAME DEVICE_ID
  Default position of DEVICE_ID_STRING is "last"  
- Run `xinput --list` to get DEVICE_ID or DEVICE_ID_STRING );
+ Run 'xinput --list' to get DEVICE_ID or DEVICE_ID_STRING );
 
 _die($usage) if $#ARGV < 0 || $#ARGV > 1;
 my $position = 'last';
