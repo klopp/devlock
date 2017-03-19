@@ -14,16 +14,30 @@ my $PROGNAME = basename($0);
 my $usage    = qq(
  Usage:
      $PROGNAME "DEVICE_ID_STRING" [position|last|first]
- Default position is "last"  
- Run `xinput --list` to get DEVICE_ID_STRING );
+ or
+     $PROGNAME DEVICE_ID
+ Default position of DEVICE_ID_STRING is "last"  
+ Run `xinput --list` to get DEVICE_ID or DEVICE_ID_STRING );
 
 _die($usage) if $#ARGV < 0 || $#ARGV > 1;
 my $position = 'last';
-if ( defined $ARGV[1] && $ARGV[1] =~ /^\d+|last|first$/ ) {
-    $position = $ARGV[1];
+my $DEV_STRING;
+if( $ARGV[0] =~ /^\d+$/ )
+{
+    _die( $usage ) if $#ARGV > 0;
+    $DEV_STRING = `xinput --list --name-only $ARGV[0] 2>/dev/null`;
+    chomp $DEV_STRING;
+    _die( "Can't read information for device ID $ARGV[0]!\n" ) unless $DEV_STRING;
 }
-elsif ( defined $ARGV[1] ) {
-    _die($usage);
+else
+{
+    if ( defined $ARGV[1] && $ARGV[1] =~ /^\d+|last|first$/ ) {
+        $position = $ARGV[1];
+    }
+    elsif ( defined $ARGV[1] ) {
+        _die($usage);
+    }
+    $DEV_STRING = $ARGV[0];
 }
 
 my ( $DEV_ID, $ICON_ON, $ICON_OFF ) = ( _get_dev_id() );
@@ -53,12 +67,14 @@ Gtk2->main();
 sub _trayicon_set_tooltip
 {
     $trayicon->set_tooltip(
-        "$ARGV[0] ($DEV_ID)\nLeft click: switch locking\nRight click: unlock and exit");
+        "$DEV_STRING ($DEV_ID)\nLeft click: switch locking\nRight click: unlock and exit");
 }
 
 # -----------------------------------------------------------------------------
 sub _get_dev_id
 {
+    return $ARGV[0] if $ARGV[0] =~ /^\d+$/;
+    
     my $x;
     unless ( open( $x, '-|', 'xinput' ) ) {
         return "Can't read xinput: $!\n";
@@ -67,7 +83,7 @@ sub _get_dev_id
     my $devstring;
     while ( defined( my $line = <$x> ) ) {
         chomp $line;
-        next unless $line =~ /$ARGV[0]/;
+        next unless $line =~ /$DEV_STRING/;
         ++$pos;
         if ( $position eq 'first' ) {
             $devstring = $line;
@@ -82,7 +98,7 @@ sub _get_dev_id
         }
     }
     close $x;
-    return "Can't read \"$ARGV[0]\" from xinput at position '$position'\n"
+    return "Can't read \"$DEV_STRING\" from xinput at position '$position'\n"
         unless $devstring;
     return "Can't find id=X in xinput output for \"$devstring\"\n"
         unless $devstring =~ /id=(\d+)/;
