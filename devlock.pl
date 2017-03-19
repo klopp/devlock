@@ -2,7 +2,7 @@
 # -----------------------------------------------------------------------------
 use strict;
 use warnings;
-use Gtk2 '-init';
+use Gtk2 qw/-init/;
 use FindBin qw /$RealBin/;
 use File::Basename;
 use constant ICON_PATH => $RealBin . '/i/';
@@ -13,8 +13,8 @@ use constant APPVER    => '0.6';
 my $PROGNAME = basename($0);
 my $usage    = qq(
  Usage:
- $PROGNAME "DEVICE_ID_STRING" [position|last|first]
- Default position is 'last'  
+     $PROGNAME "DEVICE_ID_STRING" [position|last|first]
+ Default position is "last"  
  Run `xinput --list` to get DEVICE_ID_STRING );
 
 _die($usage) if $#ARGV < 0 || $#ARGV > 1;
@@ -30,7 +30,7 @@ my ( $DEV_ID, $ICON_ON, $ICON_OFF ) = ( _get_dev_id() );
 _die($DEV_ID) unless $DEV_ID =~ /^\d+$/;
 _load_icons();
 
-my $trayicon = Gtk2::StatusIcon->new;
+my $trayicon = Gtk2::StatusIcon->new();
 my $locked   = 0;
 _trayicon_set_tooltip();
 _switch_state();
@@ -47,9 +47,7 @@ $trayicon->signal_connect(
         1;
     }
 );
-Gtk2->main;
-
-exit;
+Gtk2->main();
 
 # -----------------------------------------------------------------------------
 sub _trayicon_set_tooltip
@@ -84,12 +82,10 @@ sub _get_dev_id
         }
     }
     close $x;
-    unless ($devstring) {
-        return "Can't read \"$ARGV[0]\" from xinput at position '$position'\n";
-    }
-    unless ( $devstring =~ /id=(\d+)/ ) {
-        return "Can't find id=X in xinput output for \"$devstring\"\n";
-    }
+    return "Can't read \"$ARGV[0]\" from xinput at position '$position'\n"
+        unless $devstring;
+    return "Can't find id=X in xinput output for \"$devstring\"\n"
+        unless $devstring =~ /id=(\d+)/;
     return $1;
 }
 
@@ -140,9 +136,9 @@ sub _die
     my $label = Gtk2::Label->new("\n$msg\n");
     $dialog->get_content_area()->add($label);
     $dialog->signal_connect( response => sub { Gtk2->main_quit } );
-    $dialog->show_all;
+    $dialog->show_all();
     unless ($noquit) {
-        Gtk2->main;
+        Gtk2->main();
         exit;
     }
 }
